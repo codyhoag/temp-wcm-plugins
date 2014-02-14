@@ -32,15 +32,13 @@ import javax.portlet.PortletResponse;
 public interface Rule {
 
 	/**
-	 * Called when the rule is installed.
-	 *
+	 * Activates the rule when the rule is installed.
 	 */
 	public void activate();
 
 	/**
-	* Called when the rule is uninstalled.
-	*
-	*/
+	 * Deactivates the rule when the rule is uninstalled.
+	 */
 	public void deActivate();
 
 	/**
