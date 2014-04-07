@@ -77,9 +77,9 @@ public class RuleInstanceModelImpl extends BaseModelImpl<RuleInstance>
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "ruleKey", Types.VARCHAR },
 			{ "userSegmentId", Types.BIGINT },
-			{ "typeSettings", Types.CLOB }
+			{ "typeSettings", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table CT_RuleInstance (uuid_ VARCHAR(75) null,ruleInstanceId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,ruleKey VARCHAR(75) null,userSegmentId LONG,typeSettings TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table CT_RuleInstance (uuid_ VARCHAR(75) null,ruleInstanceId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,ruleKey VARCHAR(75) null,userSegmentId LONG,typeSettings VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table CT_RuleInstance";
 	public static final String ORDER_BY_JPQL = " ORDER BY ruleInstance.ruleKey DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY CT_RuleInstance.ruleKey DESC";
@@ -97,9 +97,9 @@ public class RuleInstanceModelImpl extends BaseModelImpl<RuleInstance>
 			true);
 	public static long COMPANYID_COLUMN_BITMASK = 1L;
 	public static long GROUPID_COLUMN_BITMASK = 2L;
-	public static long USERSEGMENTID_COLUMN_BITMASK = 4L;
-	public static long UUID_COLUMN_BITMASK = 8L;
-	public static long RULEKEY_COLUMN_BITMASK = 16L;
+	public static long RULEKEY_COLUMN_BITMASK = 4L;
+	public static long USERSEGMENTID_COLUMN_BITMASK = 8L;
+	public static long UUID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -428,7 +428,15 @@ public class RuleInstanceModelImpl extends BaseModelImpl<RuleInstance>
 	public void setRuleKey(String ruleKey) {
 		_columnBitmask = -1L;
 
+		if (_originalRuleKey == null) {
+			_originalRuleKey = _ruleKey;
+		}
+
 		_ruleKey = ruleKey;
+	}
+
+	public String getOriginalRuleKey() {
+		return GetterUtil.getString(_originalRuleKey);
 	}
 
 	@JSON
@@ -579,6 +587,8 @@ public class RuleInstanceModelImpl extends BaseModelImpl<RuleInstance>
 		ruleInstanceModelImpl._originalCompanyId = ruleInstanceModelImpl._companyId;
 
 		ruleInstanceModelImpl._setOriginalCompanyId = false;
+
+		ruleInstanceModelImpl._originalRuleKey = ruleInstanceModelImpl._ruleKey;
 
 		ruleInstanceModelImpl._originalUserSegmentId = ruleInstanceModelImpl._userSegmentId;
 
@@ -762,6 +772,7 @@ public class RuleInstanceModelImpl extends BaseModelImpl<RuleInstance>
 	private Date _createDate;
 	private Date _modifiedDate;
 	private String _ruleKey;
+	private String _originalRuleKey;
 	private long _userSegmentId;
 	private long _originalUserSegmentId;
 	private boolean _setOriginalUserSegmentId;

@@ -1,6 +1,6 @@
 # Liferay WCM Plugins
 
-The liferay-wmc-plugins repository is part of the Liferay Portal project.
+The liferay-wcm-plugins repository is part of the Liferay Portal project.
 [Liferay Portal]
 (http://www.liferay.com/community/liferay-projects/liferay-portal) is an
 open source enterprise web platform for building business solutions that deliver
@@ -108,10 +108,11 @@ The Source code of the WCM plugins is organized in the following way:
  * content-targeting-core (/shared) - contains all the common services and
 classes for the app.
  * content-targeting-portlet (/portlet) - contains all the all portlets and UIs
- * ct-time-rule (/shared) - rule used by the audience targeting app to filter
- * ct-gender-rule (/shared) - rule used by the audience targeting app to filter
- * ct-age-rule (/shared) - rule used by the audience targeting app to filter
-user audiences by time
+ * ct-time-rule (/shared) - rule used by the audience targeting app to filter user audiences by time
+ * ct-gender-rule (/shared) - rule used by the audience targeting app to filter user audiences by gender
+ * ct-age-rule (/shared) - rule used by the audience targeting app to filter user audiences by age
+ * ct-score-rule (/shared) - rule used by the audience targeting app to filter user audiences by their behavior
+ * portal-6-2-x-compat-hook (/hooks) - Hook to make the content targeting plugins compatible with Liferay 6.2.x versions.
 * OSGI modules required for the project
  * http-service-shared (/shared)
  * log-bridge-shared (/shared)
@@ -128,7 +129,7 @@ In order to deploy the audience targeting app, you can add this property to your
 build.username.properties:
 
 ```
-plugins.includes=content-targeting-core,content-targeting-portlet,ct-age-rule,ct-gender-rule,ct-time-rule,freemarker-osgi,http-service-shared,log-bridge-shared,system-packages-extra
+plugins.includes=anonymous-users-shared,content-targeting-core,content-targeting-portlet,ct-age-rule,ct-gender-rule,ct-time-rule,freemarker-osgi,http-service-shared,log-bridge-shared,service-utils-shared,system-packages-extra
 ```
 
 
@@ -169,11 +170,10 @@ following steps:
 2. Execute `mvn install` from the root folder
 3. Deploy the "arquillian-plugin-deployer" from the /shared folder of your
 plugin
-3. Uninstall the module you want to test (using the osgi console, e.g.
- `uninstall 10`)
-4. In the folder of your plugin, execute `ant test`.
-(In order to run the tests from the IDE (e.g. IntelliJ), you should update the
-folder of the runner to use the older of your plugin as the working directory).
+4. Deploy the plugin that you want to test, but do not deploy its test plugin.
+5. Run your server and in the folder of your test plugin, execute `ant test`
+In order to run the tests from the IDE (e.g. IntelliJ), you should update the
+folder of the runner to use the folder of your plugin as the working directory.
 
 ### Troubleshooting
 

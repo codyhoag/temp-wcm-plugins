@@ -352,10 +352,23 @@ public class RuleInstanceLocalServiceUtil {
 		return getService().getRuleInstances(userSegmentId);
 	}
 
+	public static java.util.List<com.liferay.contenttargeting.model.RuleInstance> getRuleInstances(
+		java.lang.String ruleKey, long userSegmentId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getRuleInstances(ruleKey, userSegmentId);
+	}
+
 	public static long getRuleInstancesCount(long userSegmentId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getRuleInstancesCount(userSegmentId);
+	}
+
+	public static long getRuleInstancesCount(java.lang.String ruleKey,
+		long userSegmentId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getRuleInstancesCount(ruleKey, userSegmentId);
 	}
 
 	public static com.liferay.contenttargeting.model.RuleInstance updateRuleInstance(

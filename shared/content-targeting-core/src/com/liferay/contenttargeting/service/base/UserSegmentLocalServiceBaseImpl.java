@@ -16,7 +16,8 @@ package com.liferay.contenttargeting.service.base;
 
 import com.liferay.contenttargeting.model.UserSegment;
 import com.liferay.contenttargeting.service.UserSegmentLocalService;
-import com.liferay.contenttargeting.service.persistence.CTUserPersistence;
+import com.liferay.contenttargeting.service.persistence.CampaignFinder;
+import com.liferay.contenttargeting.service.persistence.CampaignPersistence;
 import com.liferay.contenttargeting.service.persistence.RuleInstancePersistence;
 import com.liferay.contenttargeting.service.persistence.UserSegmentPersistence;
 
@@ -341,59 +342,223 @@ public abstract class UserSegmentLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the c t user local service.
-	 *
-	 * @return the c t user local service
+	 * @throws SystemException if a system exception occurred
 	 */
-	public com.liferay.contenttargeting.service.CTUserLocalService getCTUserLocalService() {
-		return ctUserLocalService;
+	@Override
+	public void addCampaignUserSegment(long campaignId, long userSegmentId)
+		throws SystemException {
+		campaignPersistence.addUserSegment(campaignId, userSegmentId);
 	}
 
 	/**
-	 * Sets the c t user local service.
-	 *
-	 * @param ctUserLocalService the c t user local service
+	 * @throws SystemException if a system exception occurred
 	 */
-	public void setCTUserLocalService(
-		com.liferay.contenttargeting.service.CTUserLocalService ctUserLocalService) {
-		this.ctUserLocalService = ctUserLocalService;
+	@Override
+	public void addCampaignUserSegment(long campaignId, UserSegment userSegment)
+		throws SystemException {
+		campaignPersistence.addUserSegment(campaignId, userSegment);
 	}
 
 	/**
-	 * Returns the c t user remote service.
-	 *
-	 * @return the c t user remote service
+	 * @throws SystemException if a system exception occurred
 	 */
-	public com.liferay.contenttargeting.service.CTUserService getCTUserService() {
-		return ctUserService;
+	@Override
+	public void addCampaignUserSegments(long campaignId, long[] userSegmentIds)
+		throws SystemException {
+		campaignPersistence.addUserSegments(campaignId, userSegmentIds);
 	}
 
 	/**
-	 * Sets the c t user remote service.
-	 *
-	 * @param ctUserService the c t user remote service
+	 * @throws SystemException if a system exception occurred
 	 */
-	public void setCTUserService(
-		com.liferay.contenttargeting.service.CTUserService ctUserService) {
-		this.ctUserService = ctUserService;
+	@Override
+	public void addCampaignUserSegments(long campaignId,
+		List<UserSegment> UserSegments) throws SystemException {
+		campaignPersistence.addUserSegments(campaignId, UserSegments);
 	}
 
 	/**
-	 * Returns the c t user persistence.
-	 *
-	 * @return the c t user persistence
+	 * @throws SystemException if a system exception occurred
 	 */
-	public CTUserPersistence getCTUserPersistence() {
-		return ctUserPersistence;
+	@Override
+	public void clearCampaignUserSegments(long campaignId)
+		throws SystemException {
+		campaignPersistence.clearUserSegments(campaignId);
 	}
 
 	/**
-	 * Sets the c t user persistence.
-	 *
-	 * @param ctUserPersistence the c t user persistence
+	 * @throws SystemException if a system exception occurred
 	 */
-	public void setCTUserPersistence(CTUserPersistence ctUserPersistence) {
-		this.ctUserPersistence = ctUserPersistence;
+	@Override
+	public void deleteCampaignUserSegment(long campaignId, long userSegmentId)
+		throws SystemException {
+		campaignPersistence.removeUserSegment(campaignId, userSegmentId);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public void deleteCampaignUserSegment(long campaignId,
+		UserSegment userSegment) throws SystemException {
+		campaignPersistence.removeUserSegment(campaignId, userSegment);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public void deleteCampaignUserSegments(long campaignId,
+		long[] userSegmentIds) throws SystemException {
+		campaignPersistence.removeUserSegments(campaignId, userSegmentIds);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public void deleteCampaignUserSegments(long campaignId,
+		List<UserSegment> UserSegments) throws SystemException {
+		campaignPersistence.removeUserSegments(campaignId, UserSegments);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<UserSegment> getCampaignUserSegments(long campaignId)
+		throws SystemException {
+		return campaignPersistence.getUserSegments(campaignId);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<UserSegment> getCampaignUserSegments(long campaignId,
+		int start, int end) throws SystemException {
+		return campaignPersistence.getUserSegments(campaignId, start, end);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<UserSegment> getCampaignUserSegments(long campaignId,
+		int start, int end, OrderByComparator orderByComparator)
+		throws SystemException {
+		return campaignPersistence.getUserSegments(campaignId, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public int getCampaignUserSegmentsCount(long campaignId)
+		throws SystemException {
+		return campaignPersistence.getUserSegmentsSize(campaignId);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public boolean hasCampaignUserSegment(long campaignId, long userSegmentId)
+		throws SystemException {
+		return campaignPersistence.containsUserSegment(campaignId, userSegmentId);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public boolean hasCampaignUserSegments(long campaignId)
+		throws SystemException {
+		return campaignPersistence.containsUserSegments(campaignId);
+	}
+
+	/**
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public void setCampaignUserSegments(long campaignId, long[] userSegmentIds)
+		throws SystemException {
+		campaignPersistence.setUserSegments(campaignId, userSegmentIds);
+	}
+
+	/**
+	 * Returns the campaign local service.
+	 *
+	 * @return the campaign local service
+	 */
+	public com.liferay.contenttargeting.service.CampaignLocalService getCampaignLocalService() {
+		return campaignLocalService;
+	}
+
+	/**
+	 * Sets the campaign local service.
+	 *
+	 * @param campaignLocalService the campaign local service
+	 */
+	public void setCampaignLocalService(
+		com.liferay.contenttargeting.service.CampaignLocalService campaignLocalService) {
+		this.campaignLocalService = campaignLocalService;
+	}
+
+	/**
+	 * Returns the campaign remote service.
+	 *
+	 * @return the campaign remote service
+	 */
+	public com.liferay.contenttargeting.service.CampaignService getCampaignService() {
+		return campaignService;
+	}
+
+	/**
+	 * Sets the campaign remote service.
+	 *
+	 * @param campaignService the campaign remote service
+	 */
+	public void setCampaignService(
+		com.liferay.contenttargeting.service.CampaignService campaignService) {
+		this.campaignService = campaignService;
+	}
+
+	/**
+	 * Returns the campaign persistence.
+	 *
+	 * @return the campaign persistence
+	 */
+	public CampaignPersistence getCampaignPersistence() {
+		return campaignPersistence;
+	}
+
+	/**
+	 * Sets the campaign persistence.
+	 *
+	 * @param campaignPersistence the campaign persistence
+	 */
+	public void setCampaignPersistence(CampaignPersistence campaignPersistence) {
+		this.campaignPersistence = campaignPersistence;
+	}
+
+	/**
+	 * Returns the campaign finder.
+	 *
+	 * @return the campaign finder
+	 */
+	public CampaignFinder getCampaignFinder() {
+		return campaignFinder;
+	}
+
+	/**
+	 * Sets the campaign finder.
+	 *
+	 * @param campaignFinder the campaign finder
+	 */
+	public void setCampaignFinder(CampaignFinder campaignFinder) {
+		this.campaignFinder = campaignFinder;
 	}
 
 	/**
@@ -686,12 +851,14 @@ public abstract class UserSegmentLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.contenttargeting.service.CTUserLocalService.class)
-	protected com.liferay.contenttargeting.service.CTUserLocalService ctUserLocalService;
-	@BeanReference(type = com.liferay.contenttargeting.service.CTUserService.class)
-	protected com.liferay.contenttargeting.service.CTUserService ctUserService;
-	@BeanReference(type = CTUserPersistence.class)
-	protected CTUserPersistence ctUserPersistence;
+	@BeanReference(type = com.liferay.contenttargeting.service.CampaignLocalService.class)
+	protected com.liferay.contenttargeting.service.CampaignLocalService campaignLocalService;
+	@BeanReference(type = com.liferay.contenttargeting.service.CampaignService.class)
+	protected com.liferay.contenttargeting.service.CampaignService campaignService;
+	@BeanReference(type = CampaignPersistence.class)
+	protected CampaignPersistence campaignPersistence;
+	@BeanReference(type = CampaignFinder.class)
+	protected CampaignFinder campaignFinder;
 	@BeanReference(type = com.liferay.contenttargeting.service.RuleInstanceLocalService.class)
 	protected com.liferay.contenttargeting.service.RuleInstanceLocalService ruleInstanceLocalService;
 	@BeanReference(type = com.liferay.contenttargeting.service.RuleInstanceService.class)

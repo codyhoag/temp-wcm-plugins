@@ -655,17 +655,38 @@ public class UserSegmentClp extends BaseModelImpl<UserSegment>
 	}
 
 	@Override
-	public boolean matches(com.liferay.contenttargeting.model.CTUser ctUser,
-		com.liferay.contenttargeting.api.model.RulesRegistry rulesRegistry) {
+	public java.lang.String getNameWithGroupName(java.util.Locale locale,
+		long groupId) {
 		try {
-			String methodName = "matches";
+			String methodName = "getNameWithGroupName";
 
 			Class<?>[] parameterTypes = new Class<?>[] {
-					com.liferay.contenttargeting.model.CTUser.class,
-					com.liferay.contenttargeting.api.model.RulesRegistry.class
+					java.util.Locale.class, long.class
 				};
 
-			Object[] parameterValues = new Object[] { ctUser, rulesRegistry };
+			Object[] parameterValues = new Object[] { locale, groupId };
+
+			java.lang.String returnObj = (java.lang.String)invokeOnRemoteModel(methodName,
+					parameterTypes, parameterValues);
+
+			return returnObj;
+		}
+		catch (Exception e) {
+			throw new UnsupportedOperationException(e);
+		}
+	}
+
+	@Override
+	public boolean isRuleEnabled(
+		com.liferay.contenttargeting.api.model.Rule rule) {
+		try {
+			String methodName = "isRuleEnabled";
+
+			Class<?>[] parameterTypes = new Class<?>[] {
+					com.liferay.contenttargeting.api.model.Rule.class
+				};
+
+			Object[] parameterValues = new Object[] { rule };
 
 			Boolean returnObj = (Boolean)invokeOnRemoteModel(methodName,
 					parameterTypes, parameterValues);

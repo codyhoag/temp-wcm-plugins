@@ -24,36 +24,44 @@ import java.util.Arrays;
  */
 public class UserSegmentServiceClpInvoker {
 	public UserSegmentServiceClpInvoker() {
-		_methodName30 = "getBeanIdentifier";
+		_methodName32 = "getBeanIdentifier";
 
-		_methodParameterTypes30 = new String[] {  };
+		_methodParameterTypes32 = new String[] {  };
 
-		_methodName31 = "setBeanIdentifier";
+		_methodName33 = "setBeanIdentifier";
 
-		_methodParameterTypes31 = new String[] { "java.lang.String" };
+		_methodParameterTypes33 = new String[] { "java.lang.String" };
 
-		_methodName36 = "addUserSegment";
+		_methodName38 = "addUserSegment";
 
-		_methodParameterTypes36 = new String[] {
+		_methodParameterTypes38 = new String[] {
 				"long", "java.util.Map", "java.util.Map",
 				"com.liferay.portal.service.ServiceContext"
 			};
 
-		_methodName37 = "deleteUserSegment";
-
-		_methodParameterTypes37 = new String[] { "long" };
-
-		_methodName38 = "getUserSegments";
-
-		_methodParameterTypes38 = new String[] { "long" };
-
-		_methodName39 = "getUserSegmentsCount";
+		_methodName39 = "deleteUserSegment";
 
 		_methodParameterTypes39 = new String[] { "long" };
 
-		_methodName40 = "updateUserSegment";
+		_methodName40 = "getUserSegments";
 
-		_methodParameterTypes40 = new String[] {
+		_methodParameterTypes40 = new String[] { "long" };
+
+		_methodName41 = "getUserSegments";
+
+		_methodParameterTypes41 = new String[] { "long[][]" };
+
+		_methodName42 = "getUserSegmentsCount";
+
+		_methodParameterTypes42 = new String[] { "long" };
+
+		_methodName43 = "getUserSegmentsCount";
+
+		_methodParameterTypes43 = new String[] { "long[][]" };
+
+		_methodName44 = "updateUserSegment";
+
+		_methodParameterTypes44 = new String[] {
 				"long", "java.util.Map", "java.util.Map",
 				"com.liferay.portal.service.ServiceContext"
 			};
@@ -61,43 +69,53 @@ public class UserSegmentServiceClpInvoker {
 
 	public Object invokeMethod(String name, String[] parameterTypes,
 		Object[] arguments) throws Throwable {
-		if (_methodName30.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes30, parameterTypes)) {
+		if (_methodName32.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes32, parameterTypes)) {
 			return UserSegmentServiceUtil.getBeanIdentifier();
 		}
 
-		if (_methodName31.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes31, parameterTypes)) {
+		if (_methodName33.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes33, parameterTypes)) {
 			UserSegmentServiceUtil.setBeanIdentifier((java.lang.String)arguments[0]);
 
 			return null;
 		}
 
-		if (_methodName36.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes36, parameterTypes)) {
+		if (_methodName38.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes38, parameterTypes)) {
 			return UserSegmentServiceUtil.addUserSegment(((Long)arguments[0]).longValue(),
 				(java.util.Map<java.util.Locale, java.lang.String>)arguments[1],
 				(java.util.Map<java.util.Locale, java.lang.String>)arguments[2],
 				(com.liferay.portal.service.ServiceContext)arguments[3]);
 		}
 
-		if (_methodName37.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes37, parameterTypes)) {
-			return UserSegmentServiceUtil.deleteUserSegment(((Long)arguments[0]).longValue());
-		}
-
-		if (_methodName38.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes38, parameterTypes)) {
-			return UserSegmentServiceUtil.getUserSegments(((Long)arguments[0]).longValue());
-		}
-
 		if (_methodName39.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes39, parameterTypes)) {
-			return UserSegmentServiceUtil.getUserSegmentsCount(((Long)arguments[0]).longValue());
+			return UserSegmentServiceUtil.deleteUserSegment(((Long)arguments[0]).longValue());
 		}
 
 		if (_methodName40.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes40, parameterTypes)) {
+			return UserSegmentServiceUtil.getUserSegments(((Long)arguments[0]).longValue());
+		}
+
+		if (_methodName41.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes41, parameterTypes)) {
+			return UserSegmentServiceUtil.getUserSegments((long[])arguments[0]);
+		}
+
+		if (_methodName42.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes42, parameterTypes)) {
+			return UserSegmentServiceUtil.getUserSegmentsCount(((Long)arguments[0]).longValue());
+		}
+
+		if (_methodName43.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes43, parameterTypes)) {
+			return UserSegmentServiceUtil.getUserSegmentsCount((long[])arguments[0]);
+		}
+
+		if (_methodName44.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes44, parameterTypes)) {
 			return UserSegmentServiceUtil.updateUserSegment(((Long)arguments[0]).longValue(),
 				(java.util.Map<java.util.Locale, java.lang.String>)arguments[1],
 				(java.util.Map<java.util.Locale, java.lang.String>)arguments[2],
@@ -107,18 +125,22 @@ public class UserSegmentServiceClpInvoker {
 		throw new UnsupportedOperationException();
 	}
 
-	private String _methodName30;
-	private String[] _methodParameterTypes30;
-	private String _methodName31;
-	private String[] _methodParameterTypes31;
-	private String _methodName36;
-	private String[] _methodParameterTypes36;
-	private String _methodName37;
-	private String[] _methodParameterTypes37;
+	private String _methodName32;
+	private String[] _methodParameterTypes32;
+	private String _methodName33;
+	private String[] _methodParameterTypes33;
 	private String _methodName38;
 	private String[] _methodParameterTypes38;
 	private String _methodName39;
 	private String[] _methodParameterTypes39;
 	private String _methodName40;
 	private String[] _methodParameterTypes40;
+	private String _methodName41;
+	private String[] _methodParameterTypes41;
+	private String _methodName42;
+	private String[] _methodParameterTypes42;
+	private String _methodName43;
+	private String[] _methodParameterTypes43;
+	private String _methodName44;
+	private String[] _methodParameterTypes44;
 }

@@ -14,23 +14,34 @@
 
 package com.liferay.contenttargeting.service.impl;
 
+import com.liferay.contenttargeting.UsedUserSegmentException;
+import com.liferay.contenttargeting.model.Campaign;
 import com.liferay.contenttargeting.model.RuleInstance;
 import com.liferay.contenttargeting.model.UserSegment;
 import com.liferay.contenttargeting.service.base.UserSegmentLocalServiceBaseImpl;
+import com.liferay.contenttargeting.util.BaseModelSearchResult;
 import com.liferay.contenttargeting.util.UserSegmentUtil;
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portlet.asset.NoSuchCategoryException;
 import com.liferay.portlet.asset.model.AssetCategory;
 import com.liferay.portlet.asset.model.AssetCategoryConstants;
 import com.liferay.portlet.asset.service.AssetCategoryLocalServiceUtil;
-import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetVocabularyLocalServiceUtil;
 
 import java.util.Date;
@@ -56,6 +67,7 @@ import java.util.Map;
 public class UserSegmentLocalServiceImpl
 		extends UserSegmentLocalServiceBaseImpl {
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public UserSegment addUserSegment(
 			long userId, Map<Locale, String> nameMap,
@@ -90,9 +102,17 @@ public class UserSegmentLocalServiceImpl
 		return userSegment;
 	}
 
+	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public UserSegment deleteUserSegment(long userSegmentId)
 		throws PortalException, SystemException {
+
+		List<Campaign> campaigns = userSegmentPersistence.getCampaigns(
+			userSegmentId);
+
+		if (!campaigns.isEmpty()) {
+			throw new UsedUserSegmentException(campaigns);
+		}
 
 		UserSegment userSegment = userSegmentPersistence.remove(userSegmentId);
 
@@ -132,12 +152,44 @@ public class UserSegmentLocalServiceImpl
 	}
 
 	@Override
-	public long getUserSegmentsCount(long groupId)
+	public int getUserSegmentsCount(long groupId)
 		throws PortalException, SystemException {
 
 		return userSegmentPersistence.countByGroupId(groupId);
 	}
 
+	@Override
+	public int getUserSegmentsCount(long[] groupIds)
+		throws PortalException, SystemException {
+
+		return userSegmentPersistence.countByGroupId(groupIds);
+	}
+
+	@Override
+	public Hits search(long groupId, String keywords, int start, int end)
+		throws PortalException, SystemException {
+
+		Indexer indexer = IndexerRegistryUtil.getIndexer(
+			UserSegment.class.getName());
+
+		SearchContext searchContext = buildSearchContext(
+			groupId, keywords, start, end);
+
+		return indexer.search(searchContext);
+	}
+
+	@Override
+	public BaseModelSearchResult<UserSegment> searchUserSegments(
+			long groupId, String keywords, int start, int end)
+		throws PortalException, SystemException {
+
+		SearchContext searchContext = buildSearchContext(
+			groupId, keywords, start, end);
+
+		return searchUserSegments(searchContext);
+	}
+
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public UserSegment updateUserSegment(
 			long userSegmentId, Map<Locale, String> nameMap,
@@ -170,6 +222,9 @@ public class UserSegmentLocalServiceImpl
 		long vocabularyId = UserSegmentUtil.getAssetVocabularyId(
 			userId, serviceContext);
 
+		serviceContext.setAddGroupPermissions(true);
+		serviceContext.setAddGuestPermissions(true);
+
 		AssetCategory assetCategory = AssetCategoryLocalServiceUtil.addCategory(
 			userId, AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID, titleMap,
 			descriptionMap, vocabularyId, null, serviceContext);
@@ -177,19 +232,31 @@ public class UserSegmentLocalServiceImpl
 		return assetCategory;
 	}
 
+	protected SearchContext buildSearchContext(
+			long groupId, String keywords, int start, int end)
+		throws PortalException, SystemException {
+
+		SearchContext searchContext = new SearchContext();
+
+		Group group = GroupLocalServiceUtil.getGroup(groupId);
+
+		searchContext.setCompanyId(group.getCompanyId());
+
+		searchContext.setEnd(end);
+		searchContext.setGroupIds(new long[]{groupId});
+		searchContext.setKeywords(keywords);
+		searchContext.setStart(start);
+
+		return searchContext;
+	}
+
 	protected void removeUserSegmentCategory(long assetCategoryId)
 		throws PortalException, SystemException {
 
-		int entriesCount =
-			AssetEntryLocalServiceUtil.getAssetCategoryAssetEntriesCount(
-				assetCategoryId);
-
-		if (entriesCount > 0) {
-			return;
-		}
-
 		AssetCategory assetCategory =
-			AssetCategoryLocalServiceUtil.deleteAssetCategory(assetCategoryId);
+			AssetCategoryLocalServiceUtil.fetchAssetCategory(assetCategoryId);
+
+		AssetCategoryLocalServiceUtil.deleteCategory(assetCategory);
 
 		int categoriesCount =
 			AssetCategoryLocalServiceUtil.getVocabularyRootCategoriesCount(
@@ -201,6 +268,29 @@ public class UserSegmentLocalServiceImpl
 
 		AssetVocabularyLocalServiceUtil.deleteAssetVocabulary(
 			assetCategory.getVocabularyId());
+	}
+
+	protected BaseModelSearchResult<UserSegment> searchUserSegments(
+			SearchContext searchContext)
+		throws PortalException, SystemException {
+
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+			UserSegment.class);
+
+		for (int i = 0; i < 10; i++) {
+			Hits hits = indexer.search(searchContext);
+
+			List<UserSegment> userSegments = UserSegmentUtil.getUserSegments(
+				hits);
+
+			if (userSegments != null) {
+				return new BaseModelSearchResult<UserSegment>(
+					userSegments, hits.getLength());
+			}
+		}
+
+		throw new SearchException(
+			"Unable to fix the search index after 10 attempts");
 	}
 
 	protected AssetCategory updateUserSegmentCategory(

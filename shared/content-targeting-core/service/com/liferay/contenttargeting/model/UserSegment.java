@@ -31,10 +31,13 @@ public interface UserSegment extends UserSegmentModel, PersistedModel {
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.contenttargeting.model.impl.UserSegmentImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public java.lang.String getNameWithGroupName(java.util.Locale locale,
+		long groupId);
+
 	public java.util.List<com.liferay.contenttargeting.model.RuleInstance> getRuleInstances()
 		throws com.liferay.portal.kernel.exception.SystemException;
 
-	public boolean matches(com.liferay.contenttargeting.model.CTUser ctUser,
-		com.liferay.contenttargeting.api.model.RulesRegistry rulesRegistry)
+	public boolean isRuleEnabled(
+		com.liferay.contenttargeting.api.model.Rule rule)
 		throws java.lang.Exception;
 }

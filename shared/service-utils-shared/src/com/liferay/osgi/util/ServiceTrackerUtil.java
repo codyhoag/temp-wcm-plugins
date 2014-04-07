@@ -17,6 +17,7 @@ package com.liferay.osgi.util;
 import com.liferay.portal.kernel.util.ProxyUtil;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.osgi.framework.BundleContext;
@@ -28,24 +29,12 @@ import org.osgi.util.tracker.ServiceTracker;
 public class ServiceTrackerUtil {
 
 	public static <T> T getService(
-			final Class<T> clazz, BundleContext bundleContext)
-		throws OsgiServiceUnavailableException {
+			final Class<T> clazz, BundleContext bundleContext) {
 
 		final ServiceTracker<T, T> serviceTracker = new ServiceTracker<T, T>(
 			bundleContext, clazz, null);
 
 		serviceTracker.open();
-
-		try {
-			T service = serviceTracker.waitForService(_SERVICE_TRACKER_TIMEOUT);
-
-			if (service == null) {
-				throw new OsgiServiceUnavailableException(clazz);
-			}
-		}
-		catch (InterruptedException e) {
-			throw new OsgiServiceUnavailableException(clazz);
-		}
 
 		ClassLoader classLoader = clazz.getClassLoader();
 
@@ -64,13 +53,16 @@ public class ServiceTrackerUtil {
 						throw new OsgiServiceUnavailableException(clazz);
 					}
 
-					return method.invoke(service, parameters);
+					try {
+						return method.invoke(service, parameters);
+					}
+					catch (InvocationTargetException ite) {
+						throw ite.getTargetException();
+					}
 				}
 			});
 
 		return (T)serviceProxy;
 	}
-
-	private static final int _SERVICE_TRACKER_TIMEOUT = 5000;
 
 }

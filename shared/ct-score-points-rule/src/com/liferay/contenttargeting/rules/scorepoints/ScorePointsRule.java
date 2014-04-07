@@ -16,10 +16,11 @@ package com.liferay.contenttargeting.rules.scorepoints;
 
 import aQute.bnd.annotation.component.Component;
 
+import com.liferay.anonymoususers.model.AnonymousUser;
 import com.liferay.contenttargeting.api.model.BaseRule;
 import com.liferay.contenttargeting.api.model.Rule;
-import com.liferay.contenttargeting.model.CTUser;
 import com.liferay.contenttargeting.model.RuleInstance;
+import com.liferay.contenttargeting.rules.scorepoints.service.ScorePointLocalServiceUtil;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -40,27 +41,21 @@ import javax.portlet.PortletResponse;
 public class ScorePointsRule extends BaseRule {
 
 	@Override
-	public boolean evaluate(RuleInstance ruleInstance, CTUser ctUser)
+	public boolean evaluate(
+			RuleInstance ruleInstance, AnonymousUser anonymousUser)
 		throws Exception {
-
-		if (ruleInstance == null) {
-			return false;
-		}
 
 		String typeSettings = ruleInstance.getTypeSettings();
 
 		JSONObject jsonObj = JSONFactoryUtil.createJSONObject(typeSettings);
 
-		int scorePoints = jsonObj.getInt("scorePoints");
+		long scorePoints = jsonObj.getLong("scorePoints");
 
-		String ctUserTypeSettings = ctUser.getTypeSettings();
+		long anonymousUserScorePoints = ScorePointLocalServiceUtil.getPoints(
+			anonymousUser.getAnonymousUserId(),
+			ruleInstance.getUserSegmentId());
 
-		JSONObject ctUserJsonObj = JSONFactoryUtil.createJSONObject(
-			ctUserTypeSettings);
-
-		int ctUserScorePoints = ctUserJsonObj.getInt("scorePoints");
-
-		if (ctUserScorePoints >= scorePoints) {
+		if (anonymousUserScorePoints >= scorePoints) {
 			return true;
 		}
 
@@ -86,7 +81,7 @@ public class ScorePointsRule extends BaseRule {
 			String userSegmentName = ruleInstance.getUserSegmentName(locale);
 
 			summary = LanguageUtil.format(
-				locale, "users-with-x-score-points-of-x",
+				locale, "users-with-more-than-x-score-points-of-x",
 				new Object[] {scorePoints, userSegmentName});
 		}
 		catch (JSONException jse) {
@@ -120,6 +115,11 @@ public class ScorePointsRule extends BaseRule {
 					typeSettings);
 
 				context.put("scorePoints", jsonObj.getInt("scorePoints"));
+
+				Locale locale = (Locale)context.get("locale");
+
+				context.put(
+					"userSegmentName", ruleInstance.getUserSegmentName(locale));
 			}
 			catch (JSONException jse) {
 			}

@@ -18,7 +18,7 @@
 
 <@liferay_ui["header"]
 	backURL="${redirect}"
-	title="new-user-segment"
+	title='${(userSegment.getName(locale))!"new-user-segment"}'
 />
 
 <@portlet["actionURL"] name="updateUserSegment" var="addUserSegmentURL" />
@@ -37,3 +37,19 @@
 		<@aui["button"] type="submit" />
 	</@>
 </@>
+
+<#if userSegment??>
+	<@portlet["renderURL"] var="manageRulesURL">
+		<@portlet["param"] name="mvcPath" value="${contentTargetingPath.MANAGE_RULES}" />
+		<@portlet["param"] name="redirect" value="${currentURL}" />
+		<@portlet["param"] name="userSegmentId" value="${userSegment.getUserSegmentId()?string}" />
+	</@>
+
+	<@liferay_ui["icon"]
+		image="services"
+		label=true
+		message="manage-rules"
+		method="get"
+		url="${manageRulesURL}"
+	/>
+</#if>

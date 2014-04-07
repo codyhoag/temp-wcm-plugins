@@ -3,11 +3,15 @@
 
 <service-builder package-path="com.liferay.contenttargeting">
 	<namespace>CT</namespace>
-	<entity name="CTUser" uuid="true" local-service="true" remote-service="true">
+	<entity name="Campaign" uuid="true" local-service="true" remote-service="true">
 
 		<!-- PK fields -->
 
-		<column name="CTUserId" type="long" primary="true" />
+		<column name="campaignId" type="long" primary="true" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
 
 		<!-- Audit fields -->
 
@@ -19,19 +23,26 @@
 
 		<!-- Other fields -->
 
-		<column name="lastIp" type="String" />
-		<column name="typeSettings" type="String" />
+		<column name="name" type="String" localized="true" />
+		<column name="description" type="String" localized="true" />
+		<column name="startDate" type="Date" />
+		<column name="endDate" type="Date" />
+		<column name="priority" type="int" />
+
+		<!-- Relationships -->
+
+		<column name="userSegments" type="Collection" entity="UserSegment" mapping-table="Campaigns_UserSegments" />
 
 		<!-- Order -->
 
-		<order by="desc">
-			<order-column name="CTUserId" />
+		<order by="asc">
+			<order-column name="priority" />
 		</order>
 
 		<!-- Finder methods -->
 
-		<finder name="UserId" return-type="Collection">
-			<finder-column name="userId" />
+		<finder name="GroupId" return-type="Collection">
+			<finder-column name="groupId" arrayable-operator="OR" />
 		</finder>
 	</entity>
 	<entity name="RuleInstance" uuid="true" local-service="true" remote-service="true">
@@ -72,6 +83,10 @@
 		<finder name="UserSegmentId" return-type="Collection">
 			<finder-column name="userSegmentId" />
 		</finder>
+		<finder name="R_U" return-type="Collection">
+			<finder-column name="ruleKey" />
+			<finder-column name="userSegmentId" />
+		</finder>
 	</entity>
 	<entity name="UserSegment" uuid="true" local-service="true" remote-service="true">
 
@@ -97,6 +112,10 @@
 		<column name="name" type="String" localized="true" />
 		<column name="description" type="String" localized="true" />
 
+		<!-- Relationships -->
+
+		<column name="campaigns" type="Collection" entity="Campaign" mapping-table="Campaigns_UserSegments" />
+
 		<!-- Order -->
 
 		<order by="desc">
@@ -109,4 +128,7 @@
 			<finder-column name="groupId" arrayable-operator="OR" />
 		</finder>
 	</entity>
+	<exceptions>
+		<exception>UsedUserSegment</exception>
+	</exceptions>
 </service-builder>

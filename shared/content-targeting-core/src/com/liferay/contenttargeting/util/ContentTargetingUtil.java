@@ -28,6 +28,35 @@ import java.util.List;
  */
 public class ContentTargetingUtil {
 
+	public static long[] getAncestorsAndCurrentGroupIds(long groupId)
+		throws PortalException, SystemException {
+
+		Group scopeGroup = GroupLocalServiceUtil.fetchGroup(groupId);
+
+		if (scopeGroup == null) {
+			return null;
+		}
+
+		List<Group> groups = scopeGroup.getAncestors();
+
+		groups.add(scopeGroup);
+
+		Group companyGroup = GroupLocalServiceUtil.getCompanyGroup(
+			scopeGroup.getCompanyId());
+
+		groups.add(companyGroup);
+
+		long[] groupIds = new long[groups.size()];
+
+		for (int i = 0; i < groups.size(); i++) {
+			Group group = groups.get(i);
+
+			groupIds[i] = group.getGroupId();
+		}
+
+		return groupIds;
+	}
+
 	public static long[] getAssetCategoryIds(long[] userSegmentIds)
 		throws SystemException {
 
@@ -45,30 +74,6 @@ public class ContentTargetingUtil {
 		}
 
 		return assetCategoryIds;
-	}
-
-	public static long[] getAncestorsAndCurrentGroupIds(long groupId)
-		throws PortalException, SystemException {
-
-		Group scopeGroup = GroupLocalServiceUtil.fetchGroup(groupId);
-
-		if (scopeGroup == null) {
-			return null;
-		}
-
-		List<Group> groups = scopeGroup.getAncestors();
-
-		groups.add(scopeGroup);
-
-		long[] groupIds = new long[groups.size()];
-
-		for (int i = 0; i < groups.size(); i++) {
-			Group group = groups.get(i);
-
-			groupIds[i] = group.getGroupId();
-		}
-
-		return groupIds;
 	}
 
 }

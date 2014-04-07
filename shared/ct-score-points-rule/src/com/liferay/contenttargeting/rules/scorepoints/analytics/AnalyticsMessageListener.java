@@ -37,12 +37,11 @@ public class AnalyticsMessageListener implements MessageListener {
 	protected void doReceive(Message message) throws Exception {
 		String className = message.getString("className");
 		long classPK = message.getLong("classPK");
-		long ctUserId = message.getLong("ctUserId");
+		long anonymousUserId = message.getLong("anonymousUserId");
 		long groupId = message.getLong("groupId");
 
-		if (_log.isDebugEnabled()) {
-			_log.debug(message);
-		}
+		ScorePointsAssigner.assignPoints(
+			groupId, anonymousUserId, className, classPK);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(

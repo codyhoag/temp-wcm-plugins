@@ -14,7 +14,8 @@
 
 package com.liferay.contenttargeting.internal.osgi;
 
-import com.liferay.contenttargeting.service.CTUserLocalService;
+import com.liferay.contenttargeting.service.CampaignLocalService;
+import com.liferay.contenttargeting.service.CampaignService;
 import com.liferay.contenttargeting.service.RuleInstanceLocalService;
 import com.liferay.contenttargeting.service.RuleInstanceService;
 import com.liferay.contenttargeting.service.UserSegmentLocalService;
@@ -46,13 +47,21 @@ public class ContentTargetingActivator
 		ApplicationContext applicationContext =
 			(ApplicationContext)message.getPayload();
 
-		CTUserLocalService ctUserLocalService =
-			(CTUserLocalService)applicationContext.getBean(
-				CTUserLocalService.class.getName());
+		CampaignLocalService campaignLocalService =
+			(CampaignLocalService)applicationContext.getBean(
+				CampaignLocalService.class.getName());
 
-		_ctUserLocalServiceServiceRegistration =
+		_campaignLocalServiceServiceRegistration =
 			_bundleContext.registerService(
-				CTUserLocalService.class, ctUserLocalService, null);
+				CampaignLocalService.class, campaignLocalService, null);
+
+		CampaignService campaignService =
+			(CampaignService)applicationContext.getBean(
+				CampaignService.class.getName());
+
+		_campaignServiceServiceRegistration =
+			_bundleContext.registerService(
+				CampaignService.class, campaignService, null);
 
 		RuleInstanceLocalService ruleInstanceLocalService =
 			(RuleInstanceLocalService)applicationContext.getBean(
@@ -94,7 +103,8 @@ public class ContentTargetingActivator
 
 		SerialDestination destination = new SerialDestination(DESTINATION_NAME);
 
-		MessageBus messageBus = ServiceTrackerUtil.getService(MessageBus.class, bundleContext);
+		MessageBus messageBus = ServiceTrackerUtil.getService(
+			MessageBus.class, bundleContext);
 
 		messageBus.addDestination(destination);
 
@@ -107,10 +117,16 @@ public class ContentTargetingActivator
 
 		MessageBusUtil.unregisterMessageListener(DESTINATION_NAME, this);
 
-		if (_ctUserLocalServiceServiceRegistration != null) {
-			_ctUserLocalServiceServiceRegistration.unregister();
+		if (_campaignLocalServiceServiceRegistration != null) {
+			_campaignLocalServiceServiceRegistration.unregister();
 
-			_ctUserLocalServiceServiceRegistration = null;
+			_campaignLocalServiceServiceRegistration = null;
+		}
+
+		if (_campaignServiceServiceRegistration != null) {
+			_campaignServiceServiceRegistration.unregister();
+
+			_campaignServiceServiceRegistration = null;
 		}
 
 		if (_ruleInstanceLocalServiceServiceRegistration != null) {
@@ -142,8 +158,10 @@ public class ContentTargetingActivator
 		"content-targeting-core-spring";
 
 	private BundleContext _bundleContext;
-	private ServiceRegistration<CTUserLocalService>
-		_ctUserLocalServiceServiceRegistration;
+	private ServiceRegistration<CampaignLocalService>
+		_campaignLocalServiceServiceRegistration;
+	private ServiceRegistration<CampaignService>
+		_campaignServiceServiceRegistration;
 	private ServiceRegistration<RuleInstanceLocalService>
 		_ruleInstanceLocalServiceServiceRegistration;
 	private ServiceRegistration<RuleInstanceService>

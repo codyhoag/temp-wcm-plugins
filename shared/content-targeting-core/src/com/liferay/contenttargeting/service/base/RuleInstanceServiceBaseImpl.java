@@ -16,7 +16,8 @@ package com.liferay.contenttargeting.service.base;
 
 import com.liferay.contenttargeting.model.RuleInstance;
 import com.liferay.contenttargeting.service.RuleInstanceService;
-import com.liferay.contenttargeting.service.persistence.CTUserPersistence;
+import com.liferay.contenttargeting.service.persistence.CampaignFinder;
+import com.liferay.contenttargeting.service.persistence.CampaignPersistence;
 import com.liferay.contenttargeting.service.persistence.RuleInstancePersistence;
 import com.liferay.contenttargeting.service.persistence.UserSegmentPersistence;
 
@@ -51,59 +52,77 @@ public abstract class RuleInstanceServiceBaseImpl extends BaseServiceImpl
 	 */
 
 	/**
-	 * Returns the c t user local service.
+	 * Returns the campaign local service.
 	 *
-	 * @return the c t user local service
+	 * @return the campaign local service
 	 */
-	public com.liferay.contenttargeting.service.CTUserLocalService getCTUserLocalService() {
-		return ctUserLocalService;
+	public com.liferay.contenttargeting.service.CampaignLocalService getCampaignLocalService() {
+		return campaignLocalService;
 	}
 
 	/**
-	 * Sets the c t user local service.
+	 * Sets the campaign local service.
 	 *
-	 * @param ctUserLocalService the c t user local service
+	 * @param campaignLocalService the campaign local service
 	 */
-	public void setCTUserLocalService(
-		com.liferay.contenttargeting.service.CTUserLocalService ctUserLocalService) {
-		this.ctUserLocalService = ctUserLocalService;
+	public void setCampaignLocalService(
+		com.liferay.contenttargeting.service.CampaignLocalService campaignLocalService) {
+		this.campaignLocalService = campaignLocalService;
 	}
 
 	/**
-	 * Returns the c t user remote service.
+	 * Returns the campaign remote service.
 	 *
-	 * @return the c t user remote service
+	 * @return the campaign remote service
 	 */
-	public com.liferay.contenttargeting.service.CTUserService getCTUserService() {
-		return ctUserService;
+	public com.liferay.contenttargeting.service.CampaignService getCampaignService() {
+		return campaignService;
 	}
 
 	/**
-	 * Sets the c t user remote service.
+	 * Sets the campaign remote service.
 	 *
-	 * @param ctUserService the c t user remote service
+	 * @param campaignService the campaign remote service
 	 */
-	public void setCTUserService(
-		com.liferay.contenttargeting.service.CTUserService ctUserService) {
-		this.ctUserService = ctUserService;
+	public void setCampaignService(
+		com.liferay.contenttargeting.service.CampaignService campaignService) {
+		this.campaignService = campaignService;
 	}
 
 	/**
-	 * Returns the c t user persistence.
+	 * Returns the campaign persistence.
 	 *
-	 * @return the c t user persistence
+	 * @return the campaign persistence
 	 */
-	public CTUserPersistence getCTUserPersistence() {
-		return ctUserPersistence;
+	public CampaignPersistence getCampaignPersistence() {
+		return campaignPersistence;
 	}
 
 	/**
-	 * Sets the c t user persistence.
+	 * Sets the campaign persistence.
 	 *
-	 * @param ctUserPersistence the c t user persistence
+	 * @param campaignPersistence the campaign persistence
 	 */
-	public void setCTUserPersistence(CTUserPersistence ctUserPersistence) {
-		this.ctUserPersistence = ctUserPersistence;
+	public void setCampaignPersistence(CampaignPersistence campaignPersistence) {
+		this.campaignPersistence = campaignPersistence;
+	}
+
+	/**
+	 * Returns the campaign finder.
+	 *
+	 * @return the campaign finder
+	 */
+	public CampaignFinder getCampaignFinder() {
+		return campaignFinder;
+	}
+
+	/**
+	 * Sets the campaign finder.
+	 *
+	 * @param campaignFinder the campaign finder
+	 */
+	public void setCampaignFinder(CampaignFinder campaignFinder) {
+		this.campaignFinder = campaignFinder;
 	}
 
 	/**
@@ -391,12 +410,14 @@ public abstract class RuleInstanceServiceBaseImpl extends BaseServiceImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.contenttargeting.service.CTUserLocalService.class)
-	protected com.liferay.contenttargeting.service.CTUserLocalService ctUserLocalService;
-	@BeanReference(type = com.liferay.contenttargeting.service.CTUserService.class)
-	protected com.liferay.contenttargeting.service.CTUserService ctUserService;
-	@BeanReference(type = CTUserPersistence.class)
-	protected CTUserPersistence ctUserPersistence;
+	@BeanReference(type = com.liferay.contenttargeting.service.CampaignLocalService.class)
+	protected com.liferay.contenttargeting.service.CampaignLocalService campaignLocalService;
+	@BeanReference(type = com.liferay.contenttargeting.service.CampaignService.class)
+	protected com.liferay.contenttargeting.service.CampaignService campaignService;
+	@BeanReference(type = CampaignPersistence.class)
+	protected CampaignPersistence campaignPersistence;
+	@BeanReference(type = CampaignFinder.class)
+	protected CampaignFinder campaignFinder;
 	@BeanReference(type = com.liferay.contenttargeting.service.RuleInstanceLocalService.class)
 	protected com.liferay.contenttargeting.service.RuleInstanceLocalService ruleInstanceLocalService;
 	@BeanReference(type = com.liferay.contenttargeting.service.RuleInstanceService.class)

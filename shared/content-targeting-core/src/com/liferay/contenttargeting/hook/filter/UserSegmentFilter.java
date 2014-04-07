@@ -14,19 +14,30 @@
 
 package com.liferay.contenttargeting.hook.filter;
 
-import com.liferay.contenttargeting.api.model.RulesRegistry;
-import com.liferay.contenttargeting.model.CTUser;
-import com.liferay.contenttargeting.util.CTUserUtil;
+import com.liferay.anonymoususers.model.AnonymousUser;
+import com.liferay.anonymoususers.util.AnonymousUsersManager;
+import com.liferay.contenttargeting.api.model.RulesEngine;
+import com.liferay.contenttargeting.model.UserSegment;
+import com.liferay.contenttargeting.service.UserSegmentLocalServiceUtil;
 import com.liferay.contenttargeting.util.ContentTargetingUtil;
 import com.liferay.contenttargeting.util.WebKeys;
-import com.liferay.osgi.util.OsgiServiceUnavailableException;
 import com.liferay.osgi.util.ServiceTrackerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.model.LayoutSet;
+import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 
 import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -58,13 +69,18 @@ public class UserSegmentFilter implements Filter {
 
 		HttpServletResponse response = (HttpServletResponse)servletResponse;
 
+		if (_anonymousUsersManager == null) {
+			_intiAnonymousUserManager();
+		}
+
 		try {
-			CTUser ctUser = CTUserUtil.getCTUser(request, response);
+			AnonymousUser anonymousUser =
+				_anonymousUsersManager.getAnonymousUser(request, response);
 
 			long[] groupIds = getGroupIds(request);
 
-			long[] userSegmentsIds = ctUser.getMatchesUserSegmentIds(
-				groupIds, _rulesRegistry);
+			long[] userSegmentsIds = getMatchesUserSegmentIds(
+				groupIds, anonymousUser);
 
 			if (ArrayUtil.isNotEmpty(userSegmentsIds)) {
 				request.setAttribute(WebKeys.USER_SEGMENT_IDS, userSegmentsIds);
@@ -77,33 +93,110 @@ public class UserSegmentFilter implements Filter {
 		filterChain.doFilter(servletRequest, servletResponse);
 	}
 
+	public long[] getMatchesUserSegmentIds(
+			long[] groupIds, AnonymousUser anonymousUser)
+		throws Exception {
+
+		if (ArrayUtil.isEmpty(groupIds)) {
+			return null;
+		}
+
+		List<Long> userSegmentIds = new ArrayList<Long>();
+
+		List<UserSegment> userSegments =
+			UserSegmentLocalServiceUtil.getUserSegments(groupIds);
+
+		for (UserSegment userSegment : userSegments) {
+			if (matches(anonymousUser, userSegment)) {
+				userSegmentIds.add(userSegment.getUserSegmentId());
+			}
+		}
+
+		return ArrayUtil.toLongArray(userSegmentIds);
+	}
+
 	@Override
 	public void init(FilterConfig filterConfig) {
-		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		_intiAnonymousUserManager();
+		_intiRulesEngine();
+	}
 
-		try {
-			_rulesRegistry = ServiceTrackerUtil.getService(
-				RulesRegistry.class, bundle.getBundleContext());
+	public boolean matches(AnonymousUser anonymousUser, UserSegment userSegment)
+		throws Exception {
+
+		if (_rulesEngine == null) {
+			_intiRulesEngine();
 		}
-		catch (OsgiServiceUnavailableException osue) {
-			osue.printStackTrace();
-		}
+
+		return _rulesEngine.matches(
+			anonymousUser, userSegment.getRuleInstances());
 	}
 
 	protected long[] getGroupIds(HttpServletRequest request)
 		throws PortalException, SystemException {
 
-		LayoutSet layoutSet = (LayoutSet)request.getAttribute(
-			"VIRTUAL_HOST_LAYOUT_SET");
+		String pathInfo = request.getPathInfo();
 
-		if (layoutSet == null) {
-			return null;
+		int pos = pathInfo.indexOf(CharPool.SLASH, 1);
+
+		String friendlyURL = null;
+
+		if (pos != -1) {
+			friendlyURL = pathInfo.substring(0, pos);
+		}
+		else if (pathInfo.length() > 1) {
+			friendlyURL = pathInfo;
 		}
 
-		return ContentTargetingUtil.getAncestorsAndCurrentGroupIds(
-			layoutSet.getGroupId());
+		long groupId = 0;
+
+		if (!Validator.isNull(friendlyURL)) {
+			long companyId = PortalUtil.getCompanyId(request);
+
+			try {
+				Group group = GroupLocalServiceUtil.getFriendlyURLGroup(
+					companyId, friendlyURL);
+
+				groupId = group.getGroupId();
+			}
+			catch (Exception e) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(e);
+				}
+			}
+		}
+
+		if (groupId == 0) {
+			LayoutSet layoutSet = (LayoutSet)request.getAttribute(
+					"VIRTUAL_HOST_LAYOUT_SET");
+
+			if (layoutSet == null) {
+				return null;
+			}
+
+			groupId = layoutSet.getGroupId();
+		}
+
+		return ContentTargetingUtil.getAncestorsAndCurrentGroupIds(groupId);
 	}
 
-	private RulesRegistry _rulesRegistry;
+	private void _intiAnonymousUserManager() {
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+
+		_anonymousUsersManager = ServiceTrackerUtil.getService(
+			AnonymousUsersManager.class, bundle.getBundleContext());
+	}
+
+	private void _intiRulesEngine() {
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+
+		_rulesEngine = ServiceTrackerUtil.getService(
+			RulesEngine.class, bundle.getBundleContext());
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(UserSegmentFilter.class);
+
+	private AnonymousUsersManager _anonymousUsersManager;
+	private RulesEngine _rulesEngine;
 
 }

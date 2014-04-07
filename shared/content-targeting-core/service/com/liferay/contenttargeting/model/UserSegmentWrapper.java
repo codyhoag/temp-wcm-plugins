@@ -726,8 +726,7 @@ public class UserSegmentWrapper implements UserSegment,
 	}
 
 	@Override
-	public int compareTo(
-		com.liferay.contenttargeting.model.UserSegment userSegment) {
+	public int compareTo(UserSegment userSegment) {
 		return _userSegment.compareTo(userSegment);
 	}
 
@@ -737,17 +736,17 @@ public class UserSegmentWrapper implements UserSegment,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.contenttargeting.model.UserSegment> toCacheModel() {
+	public com.liferay.portal.model.CacheModel<UserSegment> toCacheModel() {
 		return _userSegment.toCacheModel();
 	}
 
 	@Override
-	public com.liferay.contenttargeting.model.UserSegment toEscapedModel() {
+	public UserSegment toEscapedModel() {
 		return new UserSegmentWrapper(_userSegment.toEscapedModel());
 	}
 
 	@Override
-	public com.liferay.contenttargeting.model.UserSegment toUnescapedModel() {
+	public UserSegment toUnescapedModel() {
 		return new UserSegmentWrapper(_userSegment.toUnescapedModel());
 	}
 
@@ -768,16 +767,22 @@ public class UserSegmentWrapper implements UserSegment,
 	}
 
 	@Override
+	public java.lang.String getNameWithGroupName(java.util.Locale locale,
+		long groupId) {
+		return _userSegment.getNameWithGroupName(locale, groupId);
+	}
+
+	@Override
 	public java.util.List<com.liferay.contenttargeting.model.RuleInstance> getRuleInstances()
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userSegment.getRuleInstances();
 	}
 
 	@Override
-	public boolean matches(com.liferay.contenttargeting.model.CTUser ctUser,
-		com.liferay.contenttargeting.api.model.RulesRegistry rulesRegistry)
+	public boolean isRuleEnabled(
+		com.liferay.contenttargeting.api.model.Rule rule)
 		throws java.lang.Exception {
-		return _userSegment.matches(ctUser, rulesRegistry);
+		return _userSegment.isRuleEnabled(rule);
 	}
 
 	@Override

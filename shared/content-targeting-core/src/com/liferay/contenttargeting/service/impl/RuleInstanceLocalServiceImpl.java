@@ -83,10 +83,25 @@ public class RuleInstanceLocalServiceImpl
 	}
 
 	@Override
+	public List<RuleInstance> getRuleInstances(
+			String ruleKey, long userSegmentId)
+		throws SystemException {
+
+		return ruleInstancePersistence.findByR_U(ruleKey, userSegmentId);
+	}
+
+	@Override
 	public long getRuleInstancesCount(long userSegmentId)
 		throws PortalException, SystemException {
 
 		return ruleInstancePersistence.countByUserSegmentId(userSegmentId);
+	}
+
+	@Override
+	public long getRuleInstancesCount(String ruleKey, long userSegmentId)
+		throws PortalException, SystemException {
+
+		return ruleInstancePersistence.countByR_U(ruleKey, userSegmentId);
 	}
 
 	@Override

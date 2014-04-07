@@ -14,8 +14,8 @@
 
 package com.liferay.contenttargeting.service.messaging;
 
-import com.liferay.contenttargeting.service.CTUserLocalServiceUtil;
-import com.liferay.contenttargeting.service.CTUserServiceUtil;
+import com.liferay.contenttargeting.service.CampaignLocalServiceUtil;
+import com.liferay.contenttargeting.service.CampaignServiceUtil;
 import com.liferay.contenttargeting.service.ClpSerializer;
 import com.liferay.contenttargeting.service.RuleInstanceLocalServiceUtil;
 import com.liferay.contenttargeting.service.RuleInstanceServiceUtil;
@@ -40,9 +40,9 @@ public class ClpMessageListener extends BaseMessageListener {
 
 		if (command.equals("undeploy") &&
 				servletContextName.equals(getServletContextName())) {
-			CTUserLocalServiceUtil.clearService();
+			CampaignLocalServiceUtil.clearService();
 
-			CTUserServiceUtil.clearService();
+			CampaignServiceUtil.clearService();
 			RuleInstanceLocalServiceUtil.clearService();
 
 			RuleInstanceServiceUtil.clearService();

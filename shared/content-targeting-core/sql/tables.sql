@@ -1,13 +1,23 @@
-create table CT_CTUser (
+create table CT_Campaign (
 	uuid_ VARCHAR(75) null,
-	CTUserId LONG not null primary key,
+	campaignId LONG not null primary key,
+	groupId LONG,
 	companyId LONG,
 	userId LONG,
 	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
-	lastIp VARCHAR(75) null,
-	typeSettings TEXT null
+	name STRING null,
+	description STRING null,
+	startDate DATE null,
+	endDate DATE null,
+	priority INTEGER
+);
+
+create table CT_Campaigns_UserSegments (
+	campaignId LONG not null,
+	userSegmentId LONG not null,
+	primary key (campaignId, userSegmentId)
 );
 
 create table CT_Rule (
@@ -35,7 +45,7 @@ create table CT_RuleInstance (
 	modifiedDate DATE null,
 	ruleKey VARCHAR(75) null,
 	userSegmentId LONG,
-	typeSettings TEXT null
+	typeSettings VARCHAR(75) null
 );
 
 create table CT_UserSegment (
