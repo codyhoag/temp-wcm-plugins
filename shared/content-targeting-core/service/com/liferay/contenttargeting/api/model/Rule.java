@@ -103,7 +103,8 @@ public interface Rule {
 	 * Returns <code>true</code> if the rule can be used more than once with
 	 * different values for a user segment.
 	 *
-	 * @return <code>true</code> if the rule can be used more than once
+	 * @return <code>true</code> if the rule can be used more than once;
+	 *         <code>false</code> otherwise
 	 */
 	public boolean isInstantiable();
 
